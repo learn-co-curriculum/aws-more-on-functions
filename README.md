@@ -8,26 +8,16 @@
 - Define `anonymous function`
 - Define a function using a function expression
 - Define an IIFE: `Immediately-Invoked Function Expression`
-- Define `function-level scope`
-- Define `scope chain`
-- Define `closure`
 
 ## Introduction
 
-This lab describes some more advanced concepts related to JavaScript functions.
-Be sure to take time to experiment or read up on a concept if you're not
-comfortable with the idea before moving on. If you're struggling here, the
-remainder of this module will be challenging. Fix any gaps now before moving on.
+This lesson dives deeper into some more advanced concepts related to JavaScript 
+functions and other ways to define them.
 
-We also recommend that you complete the lab as you read through the sections.
-Reinforcing what you read by physically typing in the code will help make sure
-the concepts are locked in. We'll prompt you when it's a good time to shift
-modes from "reading along" to coding.
+## Review Function Declaration
 
-## Define a Function Using Function Declaration
-
-In JavaScript, the most common way to define functions is with a **function
-declaration**:
+As we learned in the previous lesson, one ofthe most common way to define functions is 
+with a **function declaration**:
 
 ```js
 function razzle() {
@@ -48,15 +38,6 @@ razzle();
 //=> "You've been razzled!"
 ```
 
-Interestingly, you can write function declarations _after_ you call them:
-
-```js
-razzle(); //=> "You've been razzled!"
-function razzle() {
-  console.log("You've been razzled!");
-}
-```
-
 Functions can be passed arguments, given default arguments, etc. Here's a
 brief code synopsis:
 
@@ -68,17 +49,26 @@ razzle(); //=> Billy razzle-dazzles 'em!
 razzle("Methuselah", "T'challah"); //=> Methuselah razzle-dazzles T'challah!
 ```
 
-**LAB**: Implement a function called `saturdayFun`. It should return a `String`
-like `"This Saturday, I want to ....!"` Fill in the `...` with the activity
-that's passed in as the first parameter. If nothing is passed in, default to
-`"roller-skate"`. Run `learn test` to verify you've gotten the first set of
-tests passing before continuing with the lesson.
+Interestingly, you can write function declarations _after_ you call them:
+
+```js
+razzle(); //=> "You've been razzled!"
+function razzle() {
+  console.log("You've been razzled!");
+}
+```
+
+But why? Variables aren't able to be looked up before they're declared. What 
+makes functions different?
 
 ## Define `Hoisting`
 
 JavaScript's ability to call functions _before_ they appear in the code is
 called _hoisting_. For hoisting to work, **the function must be defined using a
 function declaration**.
+
+Does this mean there are other ways to define functions? Yes. We'll cover a few 
+in this lesson. 
 
 ## Define `Function Expression`
 
@@ -150,26 +140,13 @@ function() {
 Unlike a function declaration, there's no function name in front of the `()`.
 Note, however, that if we don't assign a name to the function, we have no way to
 call it. We lose access to our function immediately after it's created. So how
-can we invoke an anonymous function? We've seen one way before: we can use it as
-a callback function. For example, you'll often see anonymous functions passed as
-an argument to an event listener:
-
-```js
-const button = document.getElementById("button");
-button.addEventListener("click", function () {
-  console.log("Yet more razzling");
-});
-```
-
-Our anonymous function is being passed as an argument to `addEventListener`. The
-JavaScript engine "stores it away" as work to be executed later, when the button
-is clicked.
+can we invoke an anonymous function? One way is to assign it to a variable.
 
 ## Define a Function Using a Function Expression
 
-Another way we can solve the problem of accessing an anonymous function is by
-declaring a variable and assigning the function as its value. Recall that any
-expression can be assigned to a variable; this includes function expressions:
+We can solve the problem of accessing an anonymous function by declaring a variable 
+and assigning the function as its value. Recall that any expression can be assigned 
+to a variable; this includes function expressions:
 
 ```js
 const fn = function () {
@@ -205,12 +182,6 @@ We now know how to define a function as a function expression. Very importantly,
 assignment: if we assign a `String` or the result of an arithmetic expression to
 a variable, those assignments are not hoisted either.
 
-**LAB**: Implement a function expression called `mondayWork`. The function
-should return a `String` like `"This Monday, I will ... ."` Fill in the `...`
-with the activity that's passed in as the first parameter. If nothing is passed
-in, default to `"go to the office"`. Run `learn test` to verify you've gotten
-this set of tests passing before continuing with the lesson.
-
 ## Define an IIFE: Immediately-Invoked Function Expression
 
 Another way to invoke an anonymous function is by creating what's known as an
@@ -245,222 +216,11 @@ Interestingly, any variables, functions, `Array`s, etc. that are defined
 _inside_ of the function expression's body _can't_ be seen _outside_ of the
 IIFE. To see this, check the value of `baseNumber` in the console. It's like
 opening up a micro-dimension, a bubble-universe, doing all the work you could
-ever want to do there, and then closing the space-time rift. We'll see some of
-the practical power of "hiding things" in IIFEs a little later in this lesson.
-
-## Define `Function-Level Scope`
-
-JavaScript exhibits "function-level" scope. This means that if a function is
-defined _inside another_ function, the inner function has access to all the
-parameters of, as well as any variables defined in, the outer function. This
-works recursively: if we nest a third function inside the inner function, it
-will have access to all the variables of both the inner and outer enclosing
-functions. Each of the enclosing parents' scopes are made available via the
-_scope chain_. We will define the scope chain a bit later in this lesson. Let's
-start by seeing it in action.
-
-> **ASIDE**: This is where people **really** start to get awed by JavaScript.
-
-Consider this code:
-
-```js
-function outer(greeting, msg = "It's a fine day to learn") {
-  // 2
-  const innerFunction = function (name, lang = "Python") {
-    // 3
-    return `${greeting}, ${name}! ${msg} ${lang}`; // 4
-  };
-  return innerFunction("student", "JavaScript"); // 5
-}
-
-outer("Hello"); // 1
-//=> "Hello, student! It's a fine day to learn JavaScript"
-```
-
-Let's break this down:
-
-1. We call `outer`, passing `"Hello"` as an argument.
-2. The argument (`"Hello"`) is saved in `outer`'s `greeting` parameter. The
-   other parameter, `msg`, is set to a default value.
-3. Here's our old friend the function expression. It expects two arguments, to
-   be stored in the parameters `name` and `lang`, and `lang` is assigned the
-   default value of `"Python"`. The function expression itself is saved in the
-   local variable `innerFunction`.
-4. Inside `innerFunction` we make use of its parameters, `name` and `lang`,
-   **_as well as_** the `greeting` and `msg` parameters defined in
-   innerFunction's containing (parent) function, `outer`. `innerFunction` has
-   access to those variables via the scope chain.
-5. Finally, inside `outer`, we invoke `innerFunction`, passing arguments that
-   get stored in `innerFunction`'s `name` and `lang` parameters.
-
-This might look a little bit weird, but it generally makes sense to our
-intuition about scopes: inner things can see their parent outer things.
-
-Note that currently, the values of the arguments being passed to `innerFunction`
-are part of the **definition** of `outer`. In order to change those values we
-have to modify the `outer` function. This is not ideal.
-
-With a simple change, something miraculous can happen. Rather than having `outer`
-return the result of calling `innerFunction`, let's have it return the function
-itself:
-
-```js
-function outer(greeting, msg = "It's a fine day to learn") {
-  const innerFunction = function (name, lang = "Python") {
-    return `${greeting}, ${name}! ${msg} ${lang}`;
-  };
-  return innerFunction;
-}
-```
-
-The return value of `outer` is now an **anonymous function**. To invoke it, we
-update the function call as follows:
-
-```js
-outer("Hello")("student", "JavaScript");
-//=> "Hello, student! It's a fine day to learn JavaScript"
-```
-
-The function call is processed by the JavaScript engine from left to right.
-First, `outer` is called with the argument "Hello." The return value of calling
-`outer("Hello")` is itself a function and, therefore, can itself be called. We
-do this by chaining on the second set of parentheses. This is basically the same
-concept as assigning a function expression to a variable and using the variable
-name followed by `()` to invoke the function. You can almost think of
-`outer("Hello")` as the "name" of the function that's returned by `outer`. It's
-the same as if we did this:
-
-```js
-const storedFunction = outer("Hello");
-storedFunction("student", "JavaScript");
-//=> "Hello, student! It's a fine day to learn JavaScript"
-```
-
-Note that we are no longer calling `innerFunction` from inside `outer`.
-Amazingly, the code works **_exactly the same_**: it **_still_** has access to
-those parent function's variables. It's like a little wormhole in space-time to
-the `outer`'s scope!
-
-We can tighten this code up a bit more: instead of assigning the function
-expression to `innerFunction` and returning that, let's just return the function
-expression.
-
-```js
-function outer(greeting, msg = "It's a fine day to learn") {
-  return function (name, lang = "Python") {
-    return `${greeting}, ${name}! ${msg} ${lang}`;
-  };
-}
-
-outer("Hello")("student", "JavaScript");
-//=> "Hello, student! It's a fine day to learn JavaScript"
-```
-
-To review: we first called `outer`, passing in the argument "Hello". `outer`
-**returned an anonymous function** inside which the default value of `msg` and
-the passed-in value of `greeting` have now been set. It's almost as if `outer`
-returned:
-
-```js
-function(name, lang="Python") { // The "inner" function
-  return `Hello, ${name}! It's a fine day to learn ${lang}`
-}
-```
-
-We invoked this returned _"inner" function"_ by adding the second set of
-parentheses and passing the arguments `"student"` and `"JavaScript"`, which were
-stored in `name` and `lang`. This filled in the final two values inside of the
-template string and returned:
-
-```js
-"Hello, student! It's a fine day to learn JavaScript";
-```
-
-## Define `Closure`
-
-In the previous example, we could call the "inner" function, the **anonymous
-function**, a "closure." It "encloses" the function-level scope of its parent.
-And, like a backpack, it can carry out the knowledge that it saw — _even when
-you're out of the parent's scope_.
-
-Recall the IIFE discussion. Since what's inside an IIFE can't be seen, if we
-wanted to let just tiny bits of information leak back out, we might want to
-pass that information back out, through a closure.
-
-```js
-const array = (function (thingToAdd) {
-  const base = 3;
-  return [
-    function () {
-      return base + thingToAdd;
-    },
-    function () {
-      return base;
-    },
-  ];
-})(2);
-```
-
-Note that the value on the right of the `=` in the first line is a function
-expression. That function takes a single argument and returns an array that
-contains two functions. The `(2)` after the function expression executes that
-function (immediately), and the two inner functions are stored in the `array`
-variable.
-
-Go ahead and copy the code above into your browser console and take a look at the
-values of the two elements of `array`. You should see the following:
-
-```js
-array[0]; //=> ƒ () { return base + thingToAdd; }
-array[1]; //=> ƒ () { return base; }
-```
-
-However, if you try looking at the value of `base` in the console you'll get a
-reference error: the value of `base` is not accessible outside the function it's
-defined in. Now go ahead and _call_ the two returned functions; you should see
-the following:
-
-```js
-array[0](); //=> 5
-array[1](); //=> 3
-```
-
-The two functions being returned in `array` are **closures**; they have access
-to the `base` variable because it's defined in their parent function. When
-they're executed, they "let out" the values of the sum and the original base
-number, allowing us to see them.
-
-## Define `Scope Chain`
-
-The mechanism behind all the cool stuff we just saw is the _scope chain_ which
-allows functions defined inside functions (inside functions) to access all their
-parent (and grandparent) scopes' variables. Here's a simple example:
-
-```js
-function demoChain(name) {
-  const part1 = "hi";
-  return function () {
-    const part2 = "there";
-    return function () {
-      console.log(`${part1.toUpperCase()} ${part2} ${name}`);
-    };
-  };
-}
-
-demoChain("Dr. Stephen Strange")()(); //=> HI there Dr. Stephen Strange
-```
-
-When it is called, the innermost function has access to `name`, `part1`, and
-`part2` through the _scope chain_. As a result, when the `console.log()`
-statement is run, the string includes all three values. That's awesome wormhole,
-space-time magic!
+ever want to do there, and then closing the space-time rift.
 
 ## Conclusion
 
-In this lesson, we've covered the basics of function declaration, invocation,
-and function scope. To practice what we've learned, up next is a simple lab
-to make sure that you're set for the new information coming up in the rest of
-this section.
+In this lesson, we've covered more ways to define and invoke functions. Before we carry on to more advanced concepts, let's practice what we've already learned with a lab.
 
 ## Resources
 
